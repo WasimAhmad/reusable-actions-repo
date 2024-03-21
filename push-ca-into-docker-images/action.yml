@@ -39,7 +39,7 @@ runs:
 
     - name: Load Docker image from tarball
       run: sudo docker load -i /tmp/docker-cache/my-custom-alpine.tar
-
+      shell: bash
     - name: Read Local Image Tag
       id: read-tag
       run: |
