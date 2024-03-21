@@ -9,11 +9,11 @@ jobs:
         with:
           repository: ${{ github.repository }}
       - name: Greet User
-        uses: ./greet-action.yml
+        uses: WasimAhmad/reusable-actions-repo/greet-action.yml@main
         with:
           message: 'Welcome to GitHub Actions!'
       - name: Add Numbers
-        uses: ./add-action.yml
+        uses: WasimAhmad/reusable-actions-repo/add-action.yml@main
         with:
           number1: '5'
           number2: '7'
