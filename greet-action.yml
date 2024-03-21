@@ -1,0 +1,12 @@
+name: 'Greet User'
+description: 'Greets the user with a custom message'
+inputs:
+  message:
+    description: 'Message to display'
+    required: true
+    default: 'Hello, World!'
+runs:
+  using: 'composite'
+  steps:
+    - run: echo "${{ inputs.message }}"
+      shell: bash

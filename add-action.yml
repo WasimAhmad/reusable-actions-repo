@@ -1,0 +1,14 @@
+name: 'Add Numbers'
+description: 'Adds two numbers and prints the result'
+inputs:
+  number1:
+    description: 'First number'
+    required: true
+  number2:
+    description: 'Second number'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - run: echo $(( ${{ inputs.number1 }} + ${{ inputs.number2 }} ))
+      shell: bash
