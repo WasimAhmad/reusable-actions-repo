@@ -37,8 +37,12 @@ runs:
         name: docker-image-my-custom-alpine
         path: /tmp/docker-cache
 
+    - name: Add user to the Docker group
+      run: sudo usermod -a -G docker $(whoami)
+      shell: bash
+
     - name: Load Docker image from tarball
-      run: sudo docker load -i /tmp/docker-cache/my-custom-alpine.tar
+      run: docker load -i /tmp/docker-cache/my-custom-alpine.tar
       shell: bash
     - name: Read Local Image Tag
       id: read-tag
@@ -74,10 +78,6 @@ runs:
 
     - name: Install incert
       run: go install github.com/wasimahmad/incert@latest
-      shell: bash
-
-    - name: Add user to the Docker group
-      run: sudo usermod -a -G docker $(whoami)
       shell: bash
 
     - name: Tag the loaded image
