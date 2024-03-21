@@ -77,7 +77,7 @@ runs:
       shell: bash
 
     - name: Add user to the Docker group
-      run: sudo usermod -a -G docker ${USER}
+      run: sudo usermod -a -G docker $(whoami)
       shell: bash
 
     - name: Tag the loaded image
