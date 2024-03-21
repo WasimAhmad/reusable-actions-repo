@@ -43,7 +43,10 @@ runs:
     - run: echo '${{ inputs.gcrCredentials }}' > key.json 
       shell: bash
 
-    - run: cat key.json | sudo docker login -u ${{ inputs.username }} --password-stdin https://gcr.io
+    # - run: cat key.json | sudo docker login -u ${{ inputs.username }} --password-stdin https://gcr.io
+    #   shell: bash
+
+    - run: sudo docker login -u _json_key --password-stdin https://gcr.io < key.json
       shell: bash
 
     - name: Load Docker image from tarball
