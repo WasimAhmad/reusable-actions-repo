@@ -75,11 +75,16 @@ runs:
     - name: Install incert
       run: go install github.com/wasimahmad/incert@latest
       shell: bash
+
+    - name: Add user to the Docker group
+      run: sudo usermod -a -G docker ${USER}
+      shell: bash
+
     - name: Tag the loaded image
-      run: sudo docker tag ${{ steps.read-tag.outputs.tag }} gcr.io/${{ inputs.projectId }}/${{ steps.read-imagename.outputs.imagename }}
+      run: docker tag ${{ steps.read-tag.outputs.tag }} gcr.io/${{ inputs.projectId }}/${{ steps.read-imagename.outputs.imagename }}
       shell: bash
     - name: Push the source image
-      run: sudo docker push gcr.io/${{ inputs.projectId }}/${{ steps.read-imagename.outputs.imagename }}
+      run: docker push gcr.io/${{ inputs.projectId }}/${{ steps.read-imagename.outputs.imagename }}
       shell: bash
     - name: Insert CA certificates into Docker image and push
       run: |
