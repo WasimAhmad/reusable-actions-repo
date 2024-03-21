@@ -44,7 +44,7 @@ runs:
       run: gcloud auth configure-docker ${{ inputs.region }}-docker.pkg.dev
       shell: bash      
     - name: Load Docker image from registry
-      run: sudo docker pull gcr.io/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
+      run: sudo docker pull gcr.io/${{ inputs.projectId }}/${{ steps.read-imagename.outputs.imagename }}
       shell: bash
     - name: Install Trivy
       run: |
@@ -57,8 +57,8 @@ runs:
       shell: bash
     - name: Generate SBOM
       run: |
-        trivy image --format spdx --output ${{ inputs.sbom-file }} gcr.io/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
-        trivy image --vuln-type os --ignore-unfixed -f json -o ${{ inputs.vul-report }} gcr.io/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
+        trivy image --format spdx --output ${{ inputs.sbom-file }} gcr.io/${{ inputs.projectId }}/${{ steps.read-imagename.outputs.imagename }}
+        trivy image --vuln-type os --ignore-unfixed -f json -o ${{ inputs.vul-report }} gcr.io/${{ inputs.projectId }}/${{ steps.read-imagename.outputs.imagename }}
       shell: bash
     - name: Upload SBOM as an artifact
       uses: actions/upload-artifact@v2
