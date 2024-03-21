@@ -40,8 +40,10 @@ runs:
     # - name: Add user to the Docker group
     #   run: sudo usermod -a -G docker $(whoami)
     #   shell: bash
+    - run: echo '${{ inputs.gcrCredentials }}' > key.json 
+      shell: bash
 
-    - run: sudo docker login -u _json_key -p "$(echo ${{ inputs.gcrCredentials }})" https://gcr.io
+    - run: cat key.json | sudo docker login -u ${{ inputs.username }} --password-stdin https://gcr.io
       shell: bash
 
     - name: Load Docker image from tarball
