@@ -5,11 +5,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Greet User
-        uses: WasimAhmad/reusable-actions-repo/greet-action.yml@main
+        uses: ./greet-action@main
         with:
           message: 'Welcome to GitHub Actions!'
       - name: Add Numbers
-        uses: WasimAhmad/reusable-actions-repo/add-action.yml@main
+        uses: ./add-action@main
         with:
           number1: '5'
           number2: '7'
