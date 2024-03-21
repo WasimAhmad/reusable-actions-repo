@@ -42,7 +42,7 @@ runs:
       shell: bash
 
     - name: Load Docker image from tarball
-      run: docker load -i /tmp/docker-cache/my-custom-alpine.tar
+      run: sudo docker load -i /tmp/docker-cache/my-custom-alpine.tar
       shell: bash
     - name: Read Local Image Tag
       id: read-tag
@@ -81,10 +81,10 @@ runs:
       shell: bash
 
     - name: Tag the loaded image
-      run: docker tag ${{ steps.read-tag.outputs.tag }} gcr.io/${{ inputs.projectId }}/${{ steps.read-imagename.outputs.imagename }}
+      run: sudo docker tag ${{ steps.read-tag.outputs.tag }} gcr.io/${{ inputs.projectId }}/${{ steps.read-imagename.outputs.imagename }}
       shell: bash
     - name: Push the source image
-      run: docker push gcr.io/${{ inputs.projectId }}/${{ steps.read-imagename.outputs.imagename }}
+      run: sudo docker push gcr.io/${{ inputs.projectId }}/${{ steps.read-imagename.outputs.imagename }}
       shell: bash
     - name: Insert CA certificates into Docker image and push
       run: |
