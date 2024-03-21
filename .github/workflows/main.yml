@@ -1,0 +1,15 @@
+name: Main Workflow
+on: [push]
+jobs:
+  greet-and-add:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Greet User
+        uses: ./greet-action.yml@main
+        with:
+          message: 'Welcome to GitHub Actions!'
+      - name: Add Numbers
+        uses: ./add-action.yml@main
+        with:
+          number1: '5'
+          number2: '7'
