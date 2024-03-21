@@ -43,6 +43,7 @@ runs:
         report_file=${{inputs.trivy-report}}
         vuln_count=$(jq 'if .Results then [.Results[] | select(.Class=="os-pkgs" and .Vulnerabilities!=null) | .Vulnerabilities[]] | length else 0 end' "$report_file")
         echo "vuln_count=$vuln_count" >> $GITHUB_OUTPUT
+      shell: bash
 
     - name: Set up Google Cloud
       uses: google-github-actions/setup-gcloud@v0.2.0
@@ -53,28 +54,29 @@ runs:
     - name: Configure Docker for Google Artifact Registry
       if: steps.vuln_count.outputs.vuln_count != '0'
       run: gcloud auth configure-docker ${{ inputs.region }}-docker.pkg.dev
-
+      shell: bash
     - name: Pull image
       if: steps.vuln_count.outputs.vuln_count != '0'
       run: |
         sudo docker pull ${{ inputs.region }}-docker.pkg.dev/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
-
+      shell: bash
     - name: Download and Extract Copacetic CLI
       if: steps.vuln_count.outputs.vuln_count != '0'
       run: |
         curl -L "https://github.com/project-copacetic/copacetic/releases/download/v0.6.2/copa_0.6.2_linux_amd64.tar.gz" -o copa.tar.gz
         tar -xzf copa.tar.gz
         chmod +x copa
-
+      shell: bash
     - name: Run Copacetic Patching with CLI
       if: steps.vuln_count.outputs.vuln_count != '0'
       run: |
         ./copa patch \
           -i ${{ inputs.region }}-docker.pkg.dev/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }} \
           -r ${{ inputs.trivy-report }} 
-
+      shell: bash
     - name: Push patched image
       if: steps.vuln_count.outputs.vuln_count != '0'
       run: |
         sudo docker tag '${{ inputs.region }}-docker.pkg.dev/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}-patched' ${{ inputs.region }}-docker.pkg.dev/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
         sudo docker push ${{ inputs.region }}-docker.pkg.dev/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
+      shell: bash

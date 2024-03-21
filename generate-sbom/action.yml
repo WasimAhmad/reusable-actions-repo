@@ -42,10 +42,10 @@ runs:
 
     - name: Configure Docker for Google Artifact Registry
       run: gcloud auth configure-docker ${{ inputs.region }}-docker.pkg.dev
-      
+      shell: bash      
     - name: Load Docker image from registry
       run: sudo docker pull ${{ inputs.region }}-docker.pkg.dev/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
-
+      shell: bash
     - name: Install Trivy
       run: |
         sudo apt-get update
@@ -54,12 +54,12 @@ runs:
         echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
         sudo apt-get update
         sudo apt-get install trivy
-
+      shell: bash
     - name: Generate SBOM
       run: |
         trivy image --format spdx --output ${{ inputs.sbom-file }} ${{ inputs.region }}-docker.pkg.dev/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
         trivy image --vuln-type os --ignore-unfixed -f json -o ${{ inputs.vul-report }} ${{ inputs.region }}-docker.pkg.dev/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
-
+      shell: bash
     - name: Upload SBOM as an artifact
       uses: actions/upload-artifact@v2
       with:
