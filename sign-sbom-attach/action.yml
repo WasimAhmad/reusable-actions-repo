@@ -4,28 +4,27 @@ inputs:
   region:
     description: 'GCP Region for Artifact Registry'
     required: true
-    type: string
   registry:
     description: 'Google Artifact Registry URL'
     required: true
-    type: string
   cosign-version:
     description: 'Cosign version to use (e.g., "v1.5.2")'
     required: false
     default: 'v1.5.2'
-    type: string
   sbom-file:
     description: 'Path to the file which contains SBOM information'
     required: true
-    type: string
-secrets:
   COSIGN_PRIVATE_KEY:
-    required: true
+   description: 'Cosign Private Key'
+   required: true
   COSIGN_PUBLIC_KEY:
+    description: 'Cosign Public Key'
     required: true
   COSIGN_PASSWORD:
+    description: 'Cosign Password'
     required: false
   gcrCredentials:
+    description: 'GCR Credentials'
     required: true
 runs:
   using: 'composite'

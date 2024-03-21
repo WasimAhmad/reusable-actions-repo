@@ -4,11 +4,9 @@ inputs:
   sbom-file:
     description: 'Filename for the SBOM Attestation artifact'
     required: true
-    type: string
   trivy-file:
     description: 'File in which to store Trivy scan report'
     required: true
-    type: string
 runs:
   using: 'composite'
   steps:

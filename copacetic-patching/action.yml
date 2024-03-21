@@ -4,20 +4,15 @@ inputs:
   trivy-report:
     required: true
     description: 'Vulnerability scan report file'
-    type: string
   region:
     description: 'GCP Region for Artifact Registry'
     required: true
-    type: string
   projectId:
     description: 'GCP Project ID'
     required: true
-    type: string
   repository:
     description: 'Docker Repository'
     required: true
-    type: string
-secrets:
   gcrCredentials:
     description: 'Google Cloud service account key for authentication.'
     required: true

@@ -4,16 +4,12 @@ inputs:
   projectId:
     description: 'GCP Project ID'
     required: true
-    type: string
   region:
     description: 'GCP Region for Artifact Registry'
     required: true
-    type: string
   repository:
     description: 'Docker Repository'
     required: true
-    type: string
-secrets:
   caCertBase64:
     description: 'Base64 encoded CA Certificate.'
     required: true

@@ -4,24 +4,18 @@ inputs:
   region:
     description: 'GCP Region for Artifact Registry'
     required: true
-    type: string
   projectId:
     description: 'GCP Project ID'
     required: true
-    type: string
   repository:
     description: 'Docker Repository'
     required: true
-    type: string
   sbom-file:
     description: 'Filename to use for storing SBOM'
     required: true
-    type: string
   vul-report:
     description: 'Filename to use for storing SBOM'
     required: true
-    type: string
-secrets:
   gcrCredentials:
     description: 'Google Cloud service account key for authentication.'
     required: true
