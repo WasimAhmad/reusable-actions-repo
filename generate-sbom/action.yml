@@ -1,0 +1,79 @@
+name: 'Generate SBOM'
+description: 'Generates Software Bill of Materials (SBOM) and Vulnerability Report for Docker Images'
+inputs:
+  region:
+    description: 'GCP Region for Artifact Registry'
+    required: true
+    type: string
+  projectId:
+    description: 'GCP Project ID'
+    required: true
+    type: string
+  repository:
+    description: 'Docker Repository'
+    required: true
+    type: string
+  sbom-file:
+    description: 'Filename to use for storing SBOM'
+    required: true
+    type: string
+  vul-report:
+    description: 'Filename to use for storing SBOM'
+    required: true
+    type: string
+secrets:
+  gcrCredentials:
+    description: 'Google Cloud service account key for authentication.'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Google Cloud
+      uses: google-github-actions/setup-gcloud@v0.2.0
+      with:
+        service_account_key: '${{ secrets.gcrCredentials }}'
+        project_id: '${{ inputs.projectId }}'
+
+    - name: Download Image Name Artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: image-name
+        path: .
+        
+    - name: Read Image Name
+      id: read-imagename
+      run: |
+        echo "::set-output name=imagename::$(cat image_name.txt)"
+      shell: bash
+
+    - name: Configure Docker for Google Artifact Registry
+      run: gcloud auth configure-docker ${{ inputs.region }}-docker.pkg.dev
+      
+    - name: Load Docker image from registry
+      run: sudo docker pull ${{ inputs.region }}-docker.pkg.dev/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
+
+    - name: Install Trivy
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y wget apt-transport-https gnupg lsb-release
+        wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+        echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+        sudo apt-get update
+        sudo apt-get install trivy
+
+    - name: Generate SBOM
+      run: |
+        trivy image --format spdx --output ${{ inputs.sbom-file }} ${{ inputs.region }}-docker.pkg.dev/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
+        trivy image --vuln-type os --ignore-unfixed -f json -o ${{ inputs.vul-report }} ${{ inputs.region }}-docker.pkg.dev/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
+
+    - name: Upload SBOM as an artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: sbom-artifact
+        path: ${{ inputs.sbom-file }}
+
+    - name: Upload Vulnerability Report as an artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: vul-artifact
+        path: ${{ inputs.vul-report }}

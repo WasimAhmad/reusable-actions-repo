@@ -1,0 +1,85 @@
+name: 'Copacetic Patching'
+description: 'Patches Docker images based on vulnerability scan report'
+inputs:
+  trivy-report:
+    required: true
+    description: 'Vulnerability scan report file'
+    type: string
+  region:
+    description: 'GCP Region for Artifact Registry'
+    required: true
+    type: string
+  projectId:
+    description: 'GCP Project ID'
+    required: true
+    type: string
+  repository:
+    description: 'Docker Repository'
+    required: true
+    type: string
+secrets:
+  gcrCredentials:
+    description: 'Google Cloud service account key for authentication.'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Download Image Name Artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: image-name
+        path: .
+        
+    - name: Read Image Name
+      id: read-imagename
+      run: |
+        echo "::set-output name=imagename::$(cat image_name.txt)"
+      shell: bash
+        
+    - name: Download Vulnerability Report as an artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: vul-artifact
+        path: .
+
+    - name: Check vulnerability count
+      id: vuln_count
+      run: |
+        report_file=${{inputs.trivy-report}}
+        vuln_count=$(jq 'if .Results then [.Results[] | select(.Class=="os-pkgs" and .Vulnerabilities!=null) | .Vulnerabilities[]] | length else 0 end' "$report_file")
+        echo "vuln_count=$vuln_count" >> $GITHUB_OUTPUT
+
+    - name: Set up Google Cloud
+      uses: google-github-actions/setup-gcloud@v0.2.0
+      with:
+        service_account_key: ${{ secrets.gcrCredentials }}
+        project_id: ${{ inputs.projectId }}
+
+    - name: Configure Docker for Google Artifact Registry
+      if: steps.vuln_count.outputs.vuln_count != '0'
+      run: gcloud auth configure-docker ${{ inputs.region }}-docker.pkg.dev
+
+    - name: Pull image
+      if: steps.vuln_count.outputs.vuln_count != '0'
+      run: |
+        sudo docker pull ${{ inputs.region }}-docker.pkg.dev/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
+
+    - name: Download and Extract Copacetic CLI
+      if: steps.vuln_count.outputs.vuln_count != '0'
+      run: |
+        curl -L "https://github.com/project-copacetic/copacetic/releases/download/v0.6.2/copa_0.6.2_linux_amd64.tar.gz" -o copa.tar.gz
+        tar -xzf copa.tar.gz
+        chmod +x copa
+
+    - name: Run Copacetic Patching with CLI
+      if: steps.vuln_count.outputs.vuln_count != '0'
+      run: |
+        ./copa patch \
+          -i ${{ inputs.region }}-docker.pkg.dev/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }} \
+          -r ${{ inputs.trivy-report }} 
+
+    - name: Push patched image
+      if: steps.vuln_count.outputs.vuln_count != '0'
+      run: |
+        sudo docker tag '${{ inputs.region }}-docker.pkg.dev/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}-patched' ${{ inputs.region }}-docker.pkg.dev/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
+        sudo docker push ${{ inputs.region }}-docker.pkg.dev/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
