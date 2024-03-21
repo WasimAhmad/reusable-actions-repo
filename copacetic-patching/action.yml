@@ -48,7 +48,7 @@ runs:
     - name: Set up Google Cloud
       uses: google-github-actions/setup-gcloud@v0.2.0
       with:
-        service_account_key: ${{ secrets.gcrCredentials }}
+        service_account_key: ${{ inputs.gcrCredentials }}
         project_id: ${{ inputs.projectId }}
 
     - name: Configure Docker for Google Artifact Registry
