@@ -4,6 +4,8 @@ jobs:
   greet-and-add:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
       - name: Greet User
         uses: ./greet-action.yml
         with:
