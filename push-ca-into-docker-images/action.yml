@@ -96,6 +96,6 @@ runs:
       shell: bash
     - name: Insert CA certificates into Docker image and push
       run: |
-        chmod +x ${{ github.workspace }}/push-ca-into-docker-images/incert
-        ${{ github.workspace }}/push-ca-into-docker-images/incert -ca-certs-file decoded-ca-cert.pem -image-url gcr.io/${{ inputs.projectId }}/${{ steps.read-imagename.outputs.imagename }} -dest-image-url gcr.io/${{ inputs.projectId }}/${{ steps.read-imagename.outputs.imagename }}
+        chmod +x ${GITHUB_WORKSPACE}/.github/actions/push-ca-into-docker-images/incert
+        ${GITHUB_WORKSPACE}/.github/actions/push-ca-into-docker-images/incert -ca-certs-file decoded-ca-cert.pem -image-url gcr.io/${{ inputs.projectId }}/${{ steps.read-imagename.outputs.imagename }} -dest-image-url gcr.io/${{ inputs.projectId }}/${{ steps.read-imagename.outputs.imagename }}
       shell: bash
