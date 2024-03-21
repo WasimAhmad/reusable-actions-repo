@@ -76,12 +76,12 @@ runs:
       run: go install github.com/wasimahmad/incert@latest
       shell: bash
     - name: Tag the loaded image
-      run: sudo docker tag ${{ steps.read-tag.outputs.tag }} ${{ inputs.region }}-docker.pkg.dev/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
+      run: sudo docker tag ${{ steps.read-tag.outputs.tag }} gcr.io/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
       shell: bash
     - name: Push the source image
-      run: sudo docker push ${{ inputs.region }}-docker.pkg.dev/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
+      run: sudo docker push gcr.io/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
       shell: bash
     - name: Insert CA certificates into Docker image and push
       run: |
-        incert -ca-certs-file decoded-ca-cert.pem -image-url ${{ inputs.region }}-docker.pkg.dev/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }} -dest-image-url ${{ inputs.region }}-docker.pkg.dev/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
+        incert -ca-certs-file decoded-ca-cert.pem -image-url gcr.io/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }} -dest-image-url gcr.io/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
       shell: bash

@@ -58,7 +58,7 @@ runs:
     - name: Pull image
       if: steps.vuln_count.outputs.vuln_count != '0'
       run: |
-        sudo docker pull ${{ inputs.region }}-docker.pkg.dev/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
+        sudo docker pull gcr.io//${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
       shell: bash
     - name: Download and Extract Copacetic CLI
       if: steps.vuln_count.outputs.vuln_count != '0'
@@ -71,12 +71,12 @@ runs:
       if: steps.vuln_count.outputs.vuln_count != '0'
       run: |
         ./copa patch \
-          -i ${{ inputs.region }}-docker.pkg.dev/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }} \
+          -i gcr.io/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }} \
           -r ${{ inputs.trivy-report }} 
       shell: bash
     - name: Push patched image
       if: steps.vuln_count.outputs.vuln_count != '0'
       run: |
-        sudo docker tag '${{ inputs.region }}-docker.pkg.dev/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}-patched' ${{ inputs.region }}-docker.pkg.dev/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
-        sudo docker push ${{ inputs.region }}-docker.pkg.dev/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
+        sudo docker tag 'gcr.io/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}-patched' gcr.io/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
+        sudo docker push gcr.io/${{ inputs.projectId }}/${{ inputs.repository }}/${{ steps.read-imagename.outputs.imagename }}
       shell: bash
