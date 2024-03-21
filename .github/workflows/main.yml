@@ -6,12 +6,14 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
+        with:
+          repository: ${{ github.repository }}
       - name: Greet User
-        uses: ./.github/actions/greet-action.yml
+        uses: ./greet-action.yml
         with:
           message: 'Welcome to GitHub Actions!'
       - name: Add Numbers
-        uses: ./.github/actions/add-action.yml
+        uses: ./add-action.yml
         with:
           number1: '5'
           number2: '7'
