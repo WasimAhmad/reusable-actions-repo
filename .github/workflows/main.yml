@@ -5,13 +5,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Greet User
-        uses: ./greet-action.yml
+        uses: ./.github/actions/greet-action.yml
         with:
           message: 'Welcome to GitHub Actions!'
       - name: Add Numbers
-        uses: ./add-action.yml
+        uses: ./.github/actions/add-action.yml
         with:
           number1: '5'
           number2: '7'
