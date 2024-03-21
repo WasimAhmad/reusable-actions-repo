@@ -26,7 +26,6 @@ runs:
         path: .
         
     - name: Read Image Name
-    - name: Read Image Name
       id: read-imagename
       run: |
         echo "::set-output name=imagename::$(cat image_name.txt)"
