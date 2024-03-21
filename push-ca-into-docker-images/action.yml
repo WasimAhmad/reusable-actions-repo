@@ -41,7 +41,7 @@ runs:
     #   run: sudo usermod -a -G docker $(whoami)
     #   shell: bash
 
-    - run: docker login -u _json_key -p "$(echo ${{ inputs.gcrCredentials }})" https://gcr.io
+    - run: sudo docker login -u _json_key -p "$(echo ${{ inputs.gcrCredentials }})" https://gcr.io
       shell: bash
 
     - name: Load Docker image from tarball
