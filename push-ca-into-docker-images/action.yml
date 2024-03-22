@@ -50,18 +50,18 @@ runs:
       with:
         credentials_json: ${{ inputs.gcrcredentials }}
         project_id: ${{ inputs.projectid }}
-        
+
     - name: set up google cloud
       uses: google-github-actions/setup-gcloud@v2.1.0
-      with:
-        project_id: ${{ inputs.projectid }}
+
+    - name: set gcloud project
+      run: gcloud config set project ${{inputs.projectid}}
+      shell: bash
+
     - name: configure docker for google artifact registry
       run: |- 
         gcloud auth list
         gcloud auth configure-docker ${{inputs.region}}-docker.pkg.dev --quiet
-      shell: bash
-    - name: set gcloud project
-      run: gcloud config set project ${{inputs.projectid}}
       shell: bash
     - name: set up go
       uses: actions/setup-go@v3
