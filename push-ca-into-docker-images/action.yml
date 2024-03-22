@@ -56,7 +56,9 @@ runs:
       with:
         project_id: ${{ inputs.projectid }}
     - name: configure docker for google artifact registry
-      run: gcloud auth configure-docker --quiet
+      run: |- 
+        gcloud auth list
+        gcloud auth configure-docker ${{inputs.region}}-docker.pkg.dev --quiet
       shell: bash
     - name: set gcloud project
       run: gcloud config set project ${{inputs.projectid}}
